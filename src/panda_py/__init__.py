@@ -289,7 +289,7 @@ class Desk:
     self._logged_in = True
     _logger.info('Login succesful.')
 
-  def logout(self) -> None:
+  def logout(self, shutdown: bool = False) -> None:
     """
     Logs the current user out of the Desk. API calls will no longer
     be possible.
@@ -298,6 +298,12 @@ class Desk:
     self._session.cookies.clear()
     self._logged_in = False
     _logger.info('Logout successful.')
+
+    if shutdown:
+      self.shutdown()
+
+  def shutdown(self) -> None:
+    self._request("post", '/admin/api/shutdown', headers={'X-Control-Token': self._token.token})
 
   def _get_active_token(self) -> Token:
     token = Token()
